@@ -1,4 +1,4 @@
-name: deploy to ec2
+name: Deploy to EC2
 
 on:
   push:
@@ -13,15 +13,15 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v2
 
-    - name: Set up ssh key
+    - name: Set up SSH Key
       run: |
-        echo "${{ secrets.EC2_PRIVATE_KEY }}" >> private_key.pem
+        echo "${{ secrets.EC2_PRIVATE_KEY }}" > private_key.pem
         chmod 600 private_key.pem
 
-    - name:
+    - name: Deploy Code on EC2
       run: |
         ssh -o StrictHostKeyChecking=no -i private_key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "
-          cd aws-test &&
+          cd ~/aws-test &&
           git pull origin main &&
           npm install &&
           pm2 restart all || pm2 start app.js
